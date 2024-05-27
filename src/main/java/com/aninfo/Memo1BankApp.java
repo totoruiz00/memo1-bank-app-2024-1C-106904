@@ -2,6 +2,9 @@ package com.aninfo;
 
 import com.aninfo.model.Account;
 import com.aninfo.service.AccountService;
+import com.aninfo.service.TransactionService;
+import com.aninfo.model.Transaction;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -26,6 +30,9 @@ public class Memo1BankApp {
 
 	@Autowired
 	private AccountService accountService;
+
+    @Autowired
+    private TransactionService transactionService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Memo1BankApp.class, args);
@@ -74,6 +81,26 @@ public class Memo1BankApp {
 	public Account deposit(@PathVariable Long cbu, @RequestParam Double sum) {
 		return accountService.deposit(cbu, sum);
 	}
+
+    @GetMapping("/transactions/{cbu}")
+    public List<Transaction> getAllTransactionsByAccount(@PathVariable Long cbu) {
+        return transactionService.getAllTransactionsByAccount(cbu);
+    }
+
+    @GetMapping("/transactions/{cbu}/{id}")
+    public ResponseEntity<Transaction> getTransactionById(@PathVariable Long cbu, @PathVariable Long id) {
+        Transaction transaction = transactionService.getTransactionById(id);
+        if (transaction != null && transaction.getAccount().getCbu().equals(cbu)) {
+            return ResponseEntity.ok(transaction);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/transactions/{id}")
+    public void deleteTransactionById(@PathVariable Long id) {
+        transactionService.deleteTransactionById(id);
+    }
 
 	@Bean
 	public Docket apiDocket() {
