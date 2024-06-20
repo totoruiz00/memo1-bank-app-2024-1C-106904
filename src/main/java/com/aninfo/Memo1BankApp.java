@@ -43,7 +43,7 @@ public class Memo1BankApp {
 	public Account createAccount(@RequestBody Account account) {
 		return accountService.createAccount(account);
 	}
-
+	// adding something to test branch merge
 	@GetMapping("/accounts")
 	public Collection<Account> getAccounts() {
 		return accountService.getAccounts();
